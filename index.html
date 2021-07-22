@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+  <!-- ... -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="tailwind.css" rel="stylesheet">
+  <script defer src="https://unpkg.com/alpinejs@3.2.1/dist/cdn.min.js"></script>
+  <script>
+      function getParameterByName(name, url = window.location.href) {
+          name = name.replace(/[\[\]]/g, '\\$&');
+          var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+
+      function init()
+      {
+        return {
+            windowsOpened : [],
+            pupup : null,
+            andalas_url : 'http://account-andalas.ndevapp.space',
+            client_id : '93e5e75d-fa5f-46e7-9fee-c9af82ce63cf',
+            redirect_url : 'http://api-lasdev.ndevapp.space/api/auth/callback',
+            access_code : '',
+            url : function(){
+              return this.andalas_url + '/oauth/authorize?client_id='+this.client_id+'&redirect_uri='+encodeURIComponent(this.redirect_url)+'&response_type=code&scope=';
+            },
+            openauth : function()
+            {
+                this.access_code = '';
+                var url = this.andalas_url + '/oauth/authorize?client_id='+this.client_id+'&redirect_uri='+encodeURIComponent(this.redirect_url)+'&response_type=code&scope=';
+                this.popup = window.open(url,'Andalas ID','height=500,width=400,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+                this.popup.parentWindow = window;
+                
+                window.addEventListener("message",(e)=>{
+                    if(e.data == "ready")
+                    {
+                        e.source.postMessage(window.location.href,"*");
+                    }
+                })
+            },
+            getparam : function()
+            {
+              this.access_code = getParameterByName('code');
+            }
+        }
+      }
+
+      
+  </script>
+</head>
+<body>
+    <div class="flex h-screen" x-data="init()" x-init="getparam()">
+        <div class="w-full grid justify-items-center m-auto">
+            <form class="bg-white w-1/2 shadow-md rounded px-8 pt-6 pb-8 mb-4 ">
+              <div class="mb-5 relative">
+                <input type="text" x-model="andalas_url" id="andalas url" class="peer pt-8 border border-gray-200 focus:outline-none rounded-md focus:border-gray-500 focus:shadow-sm w-full p-3 h-16 placeholder-transparent"  autocomplete="off" />
+                <label for="andalas url" class="peer-placeholder-shown:opacity-100   opacity-75 peer-focus:opacity-75 peer-placeholder-shown:scale-100 scale-75 peer-focus:scale-75 peer-placeholder-shown:translate-y-0 -translate-y-3 peer-focus:-translate-y-3 peer-placeholder-shown:translate-x-0 translate-x-1 peer-focus:translate-x-1 absolute top-0 left-0 px-3 py-5 h-full pointer-events-none transform origin-left transition-all duration-100 ease-in-out">Andalas Url</label>
+              </div>
+              <div class="mb-5 relative">
+                <input type="text" id="client_id" x-model="client_id" class="peer pt-8 border border-gray-200 focus:outline-none rounded-md focus:border-gray-500 focus:shadow-sm w-full p-3 h-16 placeholder-transparent"  autocomplete="off" />
+                <label for="client_id" class="peer-placeholder-shown:opacity-100   opacity-75 peer-focus:opacity-75 peer-placeholder-shown:scale-100 scale-75 peer-focus:scale-75 peer-placeholder-shown:translate-y-0 -translate-y-3 peer-focus:-translate-y-3 peer-placeholder-shown:translate-x-0 translate-x-1 peer-focus:translate-x-1 absolute top-0 left-0 px-3 py-5 h-full pointer-events-none transform origin-left transition-all duration-100 ease-in-out">Client ID</label>
+              </div>
+              <div class="mb-5 relative">
+                <input type="text" id="redirect_url" x-model="redirect_url" class="peer pt-8 border border-gray-200 focus:outline-none rounded-md focus:border-gray-500 focus:shadow-sm w-full p-3 h-16 placeholder-transparent"  autocomplete="off" />
+                <label for="redirect_url" class="peer-placeholder-shown:opacity-100   opacity-75 peer-focus:opacity-75 peer-placeholder-shown:scale-100 scale-75 peer-focus:scale-75 peer-placeholder-shown:translate-y-0 -translate-y-3 peer-focus:-translate-y-3 peer-placeholder-shown:translate-x-0 translate-x-1 peer-focus:translate-x-1 absolute top-0 left-0 px-3 py-5 h-full pointer-events-none transform origin-left transition-all duration-100 ease-in-out">Redirect Url</label>
+              </div>
+              
+              <div class="flex items-center justify-between mb-10">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="openauth"> 
+                  Login Menggunakan Andalas Id
+                </button>
+                <a href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Reset</a>
+
+              </div>
+              <div class="mb-5 relative">
+                Access Code
+                <textarea rows="3" x-model="access_code" class="peer pt-8 border border-gray-200 focus:outline-none rounded-md focus:border-gray-500 focus:shadow-sm w-full p-3 h-64 placeholder-transparent" placeholder="password" autocomplete="off" ></textarea>
+              </div>
+              
+              
+            </form>
+            <p class="text-center text-gray-500 text-xs">
+              &copy;2021 Nwr. All rights reserved.
+            </p>
+          </div>
+    </div>
+</body>
+</html>
